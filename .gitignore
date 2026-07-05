@@ -1,0 +1,11 @@
+/vendor/
+/node_modules/
+/var/
+.env
+.env.local
+.DS_Store
+.idea/
+*.log
+
+# Généré par build-healthcheck.sh — commité uniquement par la CI
+/_healthcheck.html

@@ -1,0 +1,24 @@
+name: Build healthcheck
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate _healthcheck.html
+        run: bash build-healthcheck.sh
+
+      - name: Stage generated file (gitignored)
+        run: git add --force _healthcheck.html
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update _healthcheck.html [skip ci]"
+          file_pattern: _healthcheck.html
