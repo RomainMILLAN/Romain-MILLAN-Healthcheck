@@ -4,21 +4,28 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generate _healthcheck.html
+      - name: Generate healthcheck files
         run: bash build-healthcheck.sh
 
-      - name: Stage generated file (gitignored)
-        run: git add --force _healthcheck.html
+      - name: Get date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
-          commit_message: "chore: update _healthcheck.html [skip ci]"
-          file_pattern: _healthcheck.html
+          files: |
+            _healthcheck.html
+            _healthcheck-without-tag.html
+          tag_name: healthcheck-${{ github.run_id }}
+          name: Romain MILLAN - Healthcheck - ${{ steps.date.outputs.date }}
+          make_latest: true

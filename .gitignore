@@ -7,5 +7,6 @@
 .idea/
 *.log
 
-# Généré par build-healthcheck.sh — commité uniquement par la CI
+# Généré par build-healthcheck.sh
 /_healthcheck.html
+/_healthcheck-without-tag.html

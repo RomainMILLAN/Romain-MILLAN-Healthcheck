@@ -1,14 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-OUTPUT="_healthcheck.html"
-
 echo "→ Fetching tag.css from RomainMILLAN/Romain-MILLAN-Tag..."
 TAG_CSS=$(curl -sS --fail "https://raw.githubusercontent.com/RomainMILLAN/Romain-MILLAN-Tag/main/tag.css")
 
-echo "→ Generating ${OUTPUT}..."
-
-cat > "${OUTPUT}" << EOF
+HEAD_AND_STYLES=$(cat << EOF
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -166,6 +162,10 @@ body {
 }
     </style>
 </head>
+EOF
+)
+
+BODY_UP_TO_TAG=$(cat << 'BODYEOF'
 <body>
     <div class="rmh-healthcheck rmh-healthcheck--up">
         <div class="rmh-healthcheck__card" tabindex="0">
@@ -184,6 +184,10 @@ body {
 
             </div>
 
+BODYEOF
+)
+
+TAG_SECTION=$(cat << 'TAGEOF'
             <div class="rmh-healthcheck__tag">
                 <a href="https://romainmillan.fr" target="_blank" rel="noopener" title="Romain MILLAN - Développeur Web">
                     <svg class="rm-tag-logo" width="90px" viewBox="0 0 943 192" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -194,11 +198,30 @@ body {
                     </svg>
                 </a>
             </div>
+TAGEOF
+)
 
+AFTER_TAG=$(cat << 'ENDEOF'
         </div>
     </div>
 </body>
 </html>
-EOF
+ENDEOF
+)
 
-echo "✓ ${OUTPUT} generated successfully"
+echo "→ Generating _healthcheck.html..."
+{
+    echo "$HEAD_AND_STYLES"
+    echo "$BODY_UP_TO_TAG"
+    echo "$TAG_SECTION"
+    echo "$AFTER_TAG"
+} > _healthcheck.html
+
+echo "→ Generating _healthcheck-without-tag.html..."
+{
+    echo "$HEAD_AND_STYLES"
+    echo "$BODY_UP_TO_TAG"
+    echo "$AFTER_TAG"
+} > _healthcheck-without-tag.html
+
+echo "✓ Files generated successfully"
